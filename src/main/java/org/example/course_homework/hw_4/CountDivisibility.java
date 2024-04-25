@@ -1,9 +1,10 @@
 package org.example.course_homework.hw_4;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 
 /**
@@ -33,26 +34,8 @@ public class CountDivisibility {
             numbers[j] = scanner.nextInt();
         }
 
-
         long combinations = solveFast(numbers);
         System.out.println(combinations);
-    }
-
-    public static long solveSlow(int[] numbers) {
-        long combination = 0;
-
-        int length = numbers.length;
-
-        for (int i = 0; i < length; i++) {
-            long sum = 0;
-            for (int j = i; j < length; j++) {
-                sum += numbers[j];
-                if (sum % length == 0) {
-                    combination++;
-                }
-            }
-        }
-        return combination;
     }
 
     public static int solveFast(int[] numbers) {
@@ -64,10 +47,13 @@ public class CountDivisibility {
 
         Map<Integer, Integer> map = new HashMap<>(numbers.length);
 
-
-        for (int j = 0; j < prefix_sums.length; j++) {
-            int prefix_sum = prefix_sums[j];
+        for (int prefix_sum : prefix_sums) {
             int key = prefix_sum % numbers.length;
+
+            if (key < 0) { // convert negative mod result to positive
+                key += numbers.length;
+            }
+
             add(map, key);
         }
 
@@ -105,24 +91,44 @@ class CountDivisibilityBenchmark {
     }
 
     private static int[] generateArray() {
-        Random random = new Random();
-        int size = 200_000;
+        ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
+        int size = 10;
         int[] ints = new int[size];
         for (int i = 0; i < size; i++) {
-            ints[i] = random.nextInt(800) + 100;
+            ints[i] = threadLocalRandom.nextInt(-15, 16);
         }
         return ints;
     }
 
     public static void benchmark(int[] arr) {
         long start = System.nanoTime();
-        long combinations1 = CountDivisibility.solveSlow(arr);
+        long combinations1 = solveSlow(arr);
         long end1 = System.nanoTime();
         long combinations2 = CountDivisibility.solveFast(arr);
         long end2 = System.nanoTime();
 
         double pow = 1_000_000_000;
-        System.out.println("fast :" + combinations1 + " time: " + (end1 - start) / pow);
-        System.out.println("slow :" + combinations2 + " time: " + (end2 - end1) / pow);
+        if (combinations1 != combinations2) {
+            System.out.println(Arrays.toString(arr));
+            System.out.println("fast :" + combinations1 + " time: " + (end1 - start) / pow);
+            System.out.println("slow :" + combinations2 + " time: " + (end2 - end1) / pow);
+        }
+    }
+
+    private static long solveSlow(int[] numbers) {
+        long combination = 0;
+
+        int length = numbers.length;
+
+        for (int i = 0; i < length; i++) {
+            long sum = 0;
+            for (int j = i; j < length; j++) {
+                sum += numbers[j];
+                if (sum % length == 0) {
+                    combination++;
+                }
+            }
+        }
+        return combination;
     }
 }
