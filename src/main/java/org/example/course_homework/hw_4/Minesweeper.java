@@ -29,41 +29,19 @@ public class Minesweeper {
     }
 
     private static String getMineValue(int i, int j, Set<String> mines) {
+        int[] dx = new int[]{-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dy = new int[]{-1, 0, 1, -1, 1, -1, 0, 1};
+
         if (mines.contains(i + "" + j)) {
             return "*";
         }
+
         int counter = 0;
-
-        if (mines.contains((i - 1) + "" + (j - 1))) {
-            counter++;
-        }
-
-        if (mines.contains((i - 1) + "" + (j))) {
-            counter++;
-        }
-
-        if (mines.contains((i - 1) + "" + (j + 1))) {
-            counter++;
-        }
-
-        if (mines.contains((i) + "" + (j - 1))) {
-            counter++;
-        }
-
-        if (mines.contains((i) + "" + (j + 1))) {
-            counter++;
-        }
-
-        if (mines.contains((i + 1) + "" + (j - 1))) {
-            counter++;
-        }
-
-        if (mines.contains((i + 1) + "" + (j))) {
-            counter++;
-        }
-
-        if (mines.contains((i + 1) + "" + (j + 1))) {
-            counter++;
+        for (int step = 0; step < dx.length; step++) {
+            String coordinate = (i + dx[step]) + "" + (j + dy[step]);
+            if (mines.contains(coordinate)) {
+                counter++;
+            }
         }
 
         return String.valueOf(counter);
