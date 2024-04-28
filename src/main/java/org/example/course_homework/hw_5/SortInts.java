@@ -70,13 +70,14 @@ public class SortInts {
     }
 
     public static void merge(int[] numbers, int l, int m, int r) {
-        int[] left_numbers = Arrays.copyOfRange(numbers, 0, numbers.length);
-        int i = l;
+        int[] left_numbers = Arrays.copyOfRange(numbers, l, m);
+        int length = left_numbers.length;
+        int i = 0;
         int j = m;
         int k = l;
 
-        while (i < m || j < r) {
-            if (j == r || (i < m && left_numbers[i] < numbers[j])) {
+        while (i < length || j < r) {
+            if (j == r || (i < length && left_numbers[i] < numbers[j])) {
                 numbers[k] = left_numbers[i];
                 i++;
             } else {
@@ -119,7 +120,7 @@ class SortIntsBenchmark {
         boolean equals = Arrays.equals(array1, array2);
         double my = (p2 - p1) / 1_000_000_000.0;
         double lib = (p3 - p2) / 1_000_000_000.0;
-        System.out.printf("size : %d timeMySort: %.5f timeQuickSort: %.5f\n", inputArray.length, my, lib);
+        System.out.printf("size : %d timeMySort: %.5f timeQuickSort: %.5f \n", inputArray.length, my, lib);
         execs.add(my);
         if (!equals) {
             System.out.println(array1.length);
