@@ -11,8 +11,13 @@ import java.util.stream.Collectors;
  * find 3 integers in the array such that the sum is closest to target.
  * <p>
  * Input Format
- * <p>
  * First line contains an array values, second line contains target value.
+ * <p>
+ * Constraints
+ * 3 <= n <= 100000
+ * <p>
+ * Output Format
+ * Return the sum of the 3 integers. You may assume that each input would have exactly one solution.
  */
 public class Sum3Closest {
 
@@ -30,12 +35,19 @@ public class Sum3Closest {
             numbers[i] = Integer.parseInt(strings[i]);
         }
 
+        System.out.println(solveFast(numbers, target));
+    }
+
+    private static Integer solveFast(int[] numbers, int target) {
         Arrays.sort(numbers);
+
         List<DoubleSum> doubleSums = calculateDoubleSums(numbers);
-        List<Integer> tripleSums = doubleSums.stream().map(ds -> binSearchClosestTripleSum(numbers, ds, target))
+        List<Integer> tripleSums = doubleSums.stream()
+                .map(ds -> binSearchClosestTripleSum(numbers, ds, target))
                 .collect(Collectors.toList());
         Integer tripleSumWithMinDiff = findWithMinDiff(tripleSums, target);
-        System.out.println(tripleSumWithMinDiff);
+
+        return tripleSumWithMinDiff;
     }
 
     private static Integer findWithMinDiff(List<Integer> tripleSums, int target) {
@@ -67,18 +79,24 @@ public class Sum3Closest {
         int good = -1;
         int bad = numbersCopy.length;
         int tripleSum = doubleSum.sum + numbersCopy[0];
+        int minDiff = Integer.MAX_VALUE;
+        int minDiffSum = tripleSum;
 
         while (bad - good > 1) {
             int medium = (good + bad) / 2;
             tripleSum = doubleSum.sum + numbersCopy[medium];
             int diff = target - tripleSum;
+            if (Math.abs(diff) < Math.abs(minDiff)) {
+                minDiff = Math.abs(diff);
+                minDiffSum = tripleSum;
+            }
             if (diff < 0) {
                 bad = medium;
             } else {
                 good = medium;
             }
         }
-        return tripleSum;
+        return minDiffSum;
     }
 
     private static int[] createCopy(int[] numbers, int excludeIndex1, int excludeIndex2, int length) {
@@ -99,6 +117,8 @@ public class Sum3Closest {
         int sum;
         int i;
         int j;
+        int i_elem;
+        int j_elem;
 
         public DoubleSum(int sum, int i, int j) {
             this.sum = sum;
