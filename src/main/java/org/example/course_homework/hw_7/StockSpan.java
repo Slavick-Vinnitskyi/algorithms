@@ -1,7 +1,6 @@
 package org.example.course_homework.hw_7;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -54,21 +53,21 @@ public class StockSpan {
     }
 
     private static List<Integer> solve(int[] numbers) {
-        var monotonicStack = new LinkedList<Integer>();
+        var monotonicStack = new Stack<Integer>();
         var result = new ArrayList<Integer>(numbers.length);
 
         for (int i = 0; i < numbers.length; i++) {
-            while (!monotonicStack.isEmpty() && numbers[monotonicStack.peekLast()] <= numbers[i]) {
-                monotonicStack.pollLast();
+            while (!monotonicStack.isEmpty() && numbers[monotonicStack.pop().value] <= numbers[i]) {
+                monotonicStack.poll();
             }
 
             if (monotonicStack.isEmpty()) {
                 result.add(i + 1);
             } else {
-                result.add(i - monotonicStack.peekLast());
+                result.add(i - monotonicStack.pop().value);
             }
 
-            monotonicStack.add(i);
+            monotonicStack.push(i);
         }
 
         return result;
@@ -82,5 +81,52 @@ public class StockSpan {
         }
 
         System.out.println(stringBuilder);
+    }
+
+    static class Stack<T> {
+        Node<T> head;
+        int size;
+
+        public Stack() {
+            head = null;
+            size = 0;
+        }
+
+        public void push(T value) {
+            var newNode = new Node<>(value, head);
+            head = newNode;
+            size++;
+        }
+
+        public Node<T> pop() {
+            if (size == 0) {
+                return null;
+            }
+            return head;
+        }
+
+        public Node<T> poll() {
+            if (size == 0) {
+                return null;
+            }
+            var node = head;
+            head = head.next;
+            size--;
+            return node;
+        }
+
+        public boolean isEmpty() {
+            return size == 0;
+        }
+    }
+
+    static class Node<T> {
+        T value;
+        Node<T> next;
+
+        public Node(T value, Node<T> next) {
+            this.value = value;
+            this.next = next;
+        }
     }
 }
