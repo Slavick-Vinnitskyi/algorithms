@@ -1,6 +1,8 @@
 package org.example.course_homework.hw_7;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -47,34 +49,38 @@ public class StockSpan {
             numbers[i] = Integer.parseInt(strings[i]);
         }
 
-        System.out.println(solve(numbers));
+        var result = solve(numbers);
+        print(result);
     }
 
-    private static String solve(int[] numbers) {
+    private static List<Integer> solve(int[] numbers) {
         var monotonicStack = new LinkedList<Integer>();
-        var result = new StringBuilder();
+        var result = new ArrayList<Integer>(numbers.length);
 
         for (int i = 0; i < numbers.length; i++) {
-            int countSmaller = 0;
             while (!monotonicStack.isEmpty() && numbers[monotonicStack.peekLast()] <= numbers[i]) {
                 monotonicStack.pollLast();
             }
 
             if (monotonicStack.isEmpty()) {
-                for (int j = 0; j <= i; j++) {
-                    if (numbers[j] <= numbers[i]) {
-                        countSmaller++;
-                    }
-                }
-                result.append(countSmaller);
+                result.add(i + 1);
             } else {
-                result.append(i - monotonicStack.peekLast());
+                result.add(i - monotonicStack.peekLast());
             }
-            result.append(" ");
 
             monotonicStack.add(i);
         }
 
-        return result.toString();
+        return result;
+    }
+
+    private static void print(List<Integer> list) {
+        var stringBuilder = new StringBuilder();
+        for (Integer integer : list) {
+            stringBuilder.append(integer);
+            stringBuilder.append(" ");
+        }
+
+        System.out.println(stringBuilder);
     }
 }
